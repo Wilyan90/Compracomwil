@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Lista de Compras</title>
+<style>
+  .sim { background-color: green; color: white; }
+  .nao { background-color: red; color: white; }
+</style>
+</head>
+<body>
+
+<h1>Minha Lista de Compras</h1>
+
+<input type="text" id="itemInput" placeholder="Item">
+<input type="number" id="qtdInput" placeholder="Quantidade">
+<button onclick="adicionarItem()">Adicionar Item</button>
+
+<br><br>
+
+<label for="limiteInput">Limite de Gastos (R$):</label>
+<input type="number" id="limiteInput" value="0">
+
+<h2>Itens a Comprar</h2>
+<ul id="listaCompras"></ul>
+
+<h2>Itens Comprados</h2>
+<ul id="listaComprados"></ul>
+
+<p>Total Gasto: R$<span id="totalGasto">0</span></p>
+
+<script>
+  function adicionarItem() {
+    var item = document.getElementById("itemInput").value;
+    var qtd = parseInt(document.getElementById("qtdInput").value);
+
+    var li = document.createElement("li");
+    li.innerHTML = item + " x " + qtd + 
+                   " <button class='sim' onclick='confirmarCompra(this, true)'>Sim</button>" +
+                   " <button class='nao' onclick='confirmarCompra(this, false)'>Não</button>";
+    document.getElementById("listaCompras").appendChild(li);
+
+    // Limpar os campos de input
+    document.getElementById("itemInput").value = "";
+    document.getElementById("qtdInput").value = "";
+  }
+
+  function confirmarCompra(botao, confirmar) {
+    var li = botao.parentNode;
+    var itemTexto = li.textContent.split(" x ")[0];  // Extrair nome do item
+    var qtd = parseInt(li.textContent.split(" x ")[1].split(" Sim")[0]); // Extrair quantidade
+
+    if (confirmar) {
+      var valor = parseFloat(prompt("Digite o valor do item " + itemTexto + ":")); // Pedir valor após confirmar
+
+      // Adicionar item à lista de comprados
+      var liComprado = document.createElement("li");
+      liComprado.textContent = itemTexto + " - R$" + valor.toFixed(2) + " x " + qtd;
+      document.getElementById("listaComprados").appendChild(liComprado);
+
+      // Atualizar total gasto
+      atualizarTotal(valor * qtd);
+    }
+
+    // Remover item da lista de compras
+    li.remove();
+  }
+
+  function atualizarTotal(valor) {
+    var totalGasto = parseFloat(document.getElementById("totalGasto").textContent);
+    totalGasto += valor;
+    document.getElementById("totalGasto").textContent = totalGasto.toFixed(2);
+
+    // Verificar limite de gastos
+    var limite = parseFloat(document.getElementById("limiteInput").value);
+    if (limite > 0 && totalGasto >= limite * 0.8) {
+      alert("Atenção! Você está se aproximando do seu limite de gastos.");
+    }
+  }
+</script>
+
+</body>
+</html>
